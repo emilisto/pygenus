@@ -13,8 +13,7 @@ def test_totally_female():
 def test_totally_fuzzy():
     assert pygenus.classify('Lauren') == (0, 1)
 
-
-@pytest.xfail('WIP')
+@pytest.mark.xfail
 def test_male_pronouns():
     assert pygenus.classify('him') == (1, 0)
     assert pygenus.classify('he') == (1, 0)
