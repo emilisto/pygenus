@@ -3,6 +3,9 @@ from collections import Counter
 import nltk
 from nltk.corpus import names
 
+MALE_PRONOUN_SEQ = ('he', 'him', 'his', 'himself')
+FEMALE_PRONOUN_SEQ = ('she', 'her', 'hers', 'herself')
+
 
 def gender_features(word):
     return {'last_letters': word[-2:]}
@@ -17,8 +20,14 @@ def new_classifier():
 
 
 def classify_word(word):
-    classifier = new_classifier()
-    return classifier.classify(gender_features(word))
+    if word in MALE_PRONOUN_SEQ:
+        return 'male'
+    elif word in FEMALE_PRONOUN_SEQ:
+        return 'female'
+    else:
+        classifier = new_classifier()
+        return classifier.classify(gender_features(word))
+
 
 def classify(text):
     counter = Counter(classify_word(word) for word in text.split())
