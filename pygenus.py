@@ -1,4 +1,5 @@
 from collections import Counter
+import sys
 
 import nltk
 from nltk.corpus import names
@@ -36,7 +37,7 @@ class Classifier:
             word, tag = wordtag
             # TODO: narrow down the word classes as much as possible - possibly
             # include NNP and NNS instead of NN
-            desired_tags = ('PRP', 'NN')
+            desired_tags = ('PRP', 'NNS', 'NNP')
             return any(tag.startswith(desired_tag) for desired_tag in desired_tags)
 
         words = [
@@ -44,8 +45,8 @@ class Classifier:
             filter(is_possible_gender_word, tagged_words)
         ]
 
-        counter = Counter(self.classify_word(word) for word in words)
-        return counter['male'], counter['female']
+        for word in words:
+            yield word, self.classify_word(word)
 
     def _gender_features(self, word):
         return {'last_letters': word[-2:]}
@@ -59,3 +60,9 @@ def classify(text):
     if _classifier is None:
         _classifier = Classifier()
     return _classifier.classify(text)
+
+
+
+if __name__ == '__main__':
+    for match in classify(sys.stdin.read()):
+        print(match)
