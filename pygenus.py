@@ -16,7 +16,10 @@ def new_classifier():
     return nltk.NaiveBayesClassifier.train(featuresets)
 
 
-def classify(text):
+def classify_word(word):
     classifier = new_classifier()
-    counter = Counter([classifier.classify(gender_features(text))])
+    return classifier.classify(gender_features(word))
+
+def classify(text):
+    counter = Counter(classify_word(word) for word in text.split())
     return counter['male'], counter['female']
