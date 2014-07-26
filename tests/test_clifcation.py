@@ -26,3 +26,8 @@ def test_female_pronouns():
     assert pygenus.classify('she') == (0, 1)
     assert pygenus.classify('herself') == (0, 1)
     assert pygenus.classify('hers') == (0, 1)
+
+
+def test_compound_sentence():
+    assert pygenus.classify('John is looking for her, but Jane is'
+            'nowhere to be found with him.') == (2, 2)

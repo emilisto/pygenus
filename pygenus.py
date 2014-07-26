@@ -29,7 +29,22 @@ class Classifier:
             return self.bayes_classifier.classify(self._gender_features(word))
 
     def classify(self, text):
-        counter = Counter(self.classify_word(word) for word in text.split())
+        tokenized = nltk.word_tokenize(text)
+        tagged_words = nltk.pos_tag(tokenized)
+
+        def is_possible_gender_word(wordtag):
+            word, tag = wordtag
+            # TODO: narrow down the word classes as much as possible - possibly
+            # include NNP and NNS instead of NN
+            desired_tags = ('PRP', 'NN')
+            return any(tag.startswith(desired_tag) for desired_tag in desired_tags)
+
+        words = [
+            word for word, tag in
+            filter(is_possible_gender_word, tagged_words)
+        ]
+
+        counter = Counter(self.classify_word(word) for word in words)
         return counter['male'], counter['female']
 
     def _gender_features(self, word):
