@@ -1,3 +1,5 @@
 venv
 .venv
 *.pyc
+pygenus.egg-info
+*.ipynb
