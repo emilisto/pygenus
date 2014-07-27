@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+
+import argparse
+import sys
+import nltk
+
+
+def main():
+
+    parser = argparse.ArgumentParser(
+            description='''
+select_tags: filter words on stdin by nltk word tag (simply run with -v
+as argument to show all tags.)
+''')
+    parser.add_argument('tags', metavar='TAG', type=str, nargs='*')
+    parser.add_argument(
+            '-v', '--invert-match', dest='invert_match', action='store_true',
+            help='inverse matching - show those not matching')
+    args = parser.parse_args()
+
+    raw = sys.stdin.read()
+    tokenized = nltk.word_tokenize(raw)
+    word_tag_list = nltk.pos_tag(tokenized)
+
+    for word, tag in word_tag_list:
+        include_tag = any(tag.startswith(_tag) for _tag in args.tags)
+        if args.invert_match:
+            include_tag = not include_tag
+        if include_tag:
+            print(word, tag)
+
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(main())
