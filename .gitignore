@@ -3,3 +3,4 @@ venv
 *.pyc
 pygenus.egg-info
 *.ipynb
+.env
