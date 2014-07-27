@@ -17,16 +17,7 @@ class Classifier:
 
     def classify(self, text):
         # Here goes all data preprocessing
-        tokenized = nltk.word_tokenize(text)
-        tagged_words = nltk.pos_tag(tokenized)
-
-        def is_possible_gender_word(wordtag):
-            word, tag = wordtag
-            # TODO: narrow down the word classes as much as possible - possibly
-            # include NNP and NNS instead of NN
-            desired_tags = ('PRP', 'NNS', 'NNP')
-            return any(tag.startswith(desired_tag) for desired_tag in desired_tags)
-
+        tagged_words = nltk.pos_tag(nltk.word_tokenize(text))
         words = [
             word for word, tag in
             filter(is_possible_gender_word, tagged_words)
@@ -41,12 +32,16 @@ class Classifier:
         return self.classifier.classify(_gender_features(word))
 
 
+def is_possible_gender_word(wordtag):
+    _, tag = wordtag
+    # TODO: narrow down the word classes as much as possible - possibly
+    # include NNP and NNS instead of NN
+    desired_tags = ('PRP', 'NNS', 'NNP')
+    return any(tag.startswith(desired_tag) for desired_tag in desired_tags)
+
+
 def _gender_features(word):
-    if word in MALE_PRONOUN_SEQ:
-        return {'pronoun': word}
-    elif word in FEMALE_PRONOUN_SEQ:
-        return {'pronoun': word}
-    elif word in NEUTRAL_PRONOUN_SEQ:
+    if word in MALE_PRONOUN_SEQ + FEMALE_PRONOUN_SEQ + NEUTRAL_PRONOUN_SEQ:
         return {'pronoun': word}
     else:
         return {'last_letters': word[-2:]}
