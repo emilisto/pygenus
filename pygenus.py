@@ -1,8 +1,8 @@
-from collections import Counter
 import sys
 
 import nltk
 from nltk.corpus import names
+
 
 MALE_PRONOUN_SEQ = ('he', 'him', 'his', 'himself')
 FEMALE_PRONOUN_SEQ = ('she', 'her', 'hers', 'herself')
@@ -62,7 +62,11 @@ def classify(text):
     return _classifier.classify(text)
 
 
-
-if __name__ == '__main__':
+def main():
+    """Take input from stdin and print all matches as word, tag tuples."""
     for match in classify(sys.stdin.read()):
         print(match)
+
+
+if __name__ == '__main__':
+    main()
