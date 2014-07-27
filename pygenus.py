@@ -1,4 +1,5 @@
 import sys
+from itertools import chain
 
 import nltk
 from nltk.corpus import names
@@ -6,30 +7,16 @@ from nltk.corpus import names
 
 MALE_PRONOUN_SEQ = ('he', 'him', 'his', 'himself')
 FEMALE_PRONOUN_SEQ = ('she', 'her', 'hers', 'herself')
+NEUTRAL_PRONOUN_SEQ = ('they', 'them', 'their', 'theirs', 'themselves')
 
 
 class Classifier:
 
-    def __init__(self):
-        self.names = (
-            [(name, 'male') for name in names.words('male.txt')] +
-            [(name, 'female') for name in names.words('female.txt')]
-        )
-
-        featuresets = [(self._gender_features(n), gender)
-                       for (n, gender) in self.names]
-        self.bayes_classifier = nltk.NaiveBayesClassifier.train(featuresets)
-
-    def classify_word(self, word):
-        if word in MALE_PRONOUN_SEQ:
-            return 'male'
-        elif word in FEMALE_PRONOUN_SEQ:
-            return 'female'
-        # Default to Bayes classifier
-        else:
-            return self.bayes_classifier.classify(self._gender_features(word))
+    def __init__(self, classifier=None):
+        self.classifier = classifier
 
     def classify(self, text):
+        # Here goes all data preprocessing
         tokenized = nltk.word_tokenize(text)
         tagged_words = nltk.pos_tag(tokenized)
 
@@ -46,20 +33,42 @@ class Classifier:
         ]
 
         for word in words:
-            yield word, self.classify_word(word)
+            tag = self.classify_word(word)
+            if tag != 'neutral':
+                yield word, self.classify_word(word)
 
-    def _gender_features(self, word):
-        return {'last_letters': word[-2:]}
+    def classify_word(self, word):
+        if word in MALE_PRONOUN_SEQ:
+            return 'male'
+        elif word in FEMALE_PRONOUN_SEQ:
+            return 'female'
+        elif word in NEUTRAL_PRONOUN_SEQ:
+            return 'neutral'
+        # Default to classifier and and real analysis
+        else:
+            return self.classifier.classify(_gender_features(word))
 
 
-_classifier = None
+def _gender_features(word):
+    return {'last_letters': word[-2:]}
 
 
 def classify(text):
-    global _classifier
-    if _classifier is None:
-        _classifier = Classifier()
+    _classifier = Classifier(classifier=new_naive_bayes_classifier())
     return _classifier.classify(text)
+
+
+def new_naive_bayes_classifier():
+    # Create featureset consiting of male and female names for training
+    male_name_seq = ((name, 'male') for name in names.words('male.txt'))
+    female_name_seq = ((name, 'female') for name in names.words('female.txt'))
+
+    featureset_seq = (
+        (_gender_features(word), gender)
+        for word, gender in chain(male_name_seq, female_name_seq))
+
+    # Train and return ready classifier
+    return nltk.NaiveBayesClassifier.train(featureset_seq)
 
 
 def main():

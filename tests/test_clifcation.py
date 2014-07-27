@@ -28,6 +28,11 @@ def test_classify_female_pronouns_as_female(pronoun):
     assert list(pygenus.classify(pronoun)) == [(pronoun, 'female')]
 
 
+@pytest.mark.parametrize('pronoun', pygenus.NEUTRAL_PRONOUN_SEQ)
+def test_filter_out_gender_neutral_pronouns(pronoun):
+    assert list(pygenus.classify(pronoun)) == []
+
+
 def test_compound_sentence():
     assert list(pygenus.classify(
         'John is looking for her, but Jane is'
@@ -37,6 +42,11 @@ def test_compound_sentence():
             ('Jane', 'female'),
             ('him', 'male'),
         ]
+
+
+def test_defines_all_neutral_pronouns():
+    assert sorted(pygenus.NEUTRAL_PRONOUN_SEQ) == \
+        sorted(('they', 'them', 'their', 'theirs', 'themselves'))
 
 
 def test_defines_all_male_pronouns():
