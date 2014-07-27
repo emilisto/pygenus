@@ -1,4 +1,5 @@
 import pygenus
+import pytest
 
 
 def test_totally_male():
@@ -17,18 +18,14 @@ def test_totally_fuzzy():
     assert list(pygenus.classify('Lauren')) == [('Lauren', 'female')]
 
 
-def test_male_pronouns():
-    assert list(pygenus.classify('him')) == [('him', 'male')]
-    assert list(pygenus.classify('he')) == [('he', 'male')]
-    assert list(pygenus.classify('himself')) == [('himself', 'male')]
-    assert list(pygenus.classify('his')) == [('his', 'male')]
+@pytest.mark.parametrize('pronoun', pygenus.MALE_PRONOUN_SEQ)
+def test_classify_male_pronouns_as_male(pronoun):
+    assert list(pygenus.classify(pronoun)) == [(pronoun, 'male')]
 
 
-def test_female_pronouns():
-    assert list(pygenus.classify('her')) == [('her', 'female')]
-    assert list(pygenus.classify('she')) == [('she', 'female')]
-    assert list(pygenus.classify('herself')) == [('herself', 'female')]
-    assert list(pygenus.classify('hers')) == [('hers', 'female')]
+@pytest.mark.parametrize('pronoun', pygenus.FEMALE_PRONOUN_SEQ)
+def test_classify_female_pronouns_as_female(pronoun):
+    assert list(pygenus.classify(pronoun)) == [(pronoun, 'female')]
 
 
 def test_compound_sentence():
@@ -40,3 +37,13 @@ def test_compound_sentence():
             ('Jane', 'female'),
             ('him', 'male'),
         ]
+
+
+def test_defines_all_male_pronouns():
+    assert sorted(pygenus.MALE_PRONOUN_SEQ) == \
+        sorted(('him', 'he', 'his', 'himself'))
+
+
+def test_defines_all_female_pronouns():
+    assert sorted(pygenus.FEMALE_PRONOUN_SEQ) == \
+        sorted(('she', 'her', 'hers', 'herself'))
