@@ -38,19 +38,18 @@ class Classifier:
                 yield word, self.classify_word(word)
 
     def classify_word(self, word):
-        if word in MALE_PRONOUN_SEQ:
-            return 'male'
-        elif word in FEMALE_PRONOUN_SEQ:
-            return 'female'
-        elif word in NEUTRAL_PRONOUN_SEQ:
-            return 'neutral'
-        # Default to classifier and and real analysis
-        else:
-            return self.classifier.classify(_gender_features(word))
+        return self.classifier.classify(_gender_features(word))
 
 
 def _gender_features(word):
-    return {'last_letters': word[-2:]}
+    if word in MALE_PRONOUN_SEQ:
+        return {'pronoun': word}
+    elif word in FEMALE_PRONOUN_SEQ:
+        return {'pronoun': word}
+    elif word in NEUTRAL_PRONOUN_SEQ:
+        return {'pronoun': word}
+    else:
+        return {'last_letters': word[-2:]}
 
 
 def classify(text):
@@ -60,12 +59,23 @@ def classify(text):
 
 def new_naive_bayes_classifier():
     # Create featureset consiting of male and female names for training
-    male_name_seq = ((name, 'male') for name in names.words('male.txt'))
-    female_name_seq = ((name, 'female') for name in names.words('female.txt'))
+    male_word_seq = (
+        (name, 'male')
+        for name in chain(names.words('male.txt'), MALE_PRONOUN_SEQ))
+    female_word_seq = (
+        (name, 'female')
+        for name in chain(names.words('female.txt'), FEMALE_PRONOUN_SEQ))
+    neutral_pronoun_seq = (
+        (pronoun, 'neutral')
+        for pronoun in NEUTRAL_PRONOUN_SEQ)
 
     featureset_seq = (
         (_gender_features(word), gender)
-        for word, gender in chain(male_name_seq, female_name_seq))
+        for word, gender in chain(
+                male_word_seq,
+                female_word_seq,
+                neutral_pronoun_seq,
+        ))
 
     # Train and return ready classifier
     return nltk.NaiveBayesClassifier.train(featureset_seq)
