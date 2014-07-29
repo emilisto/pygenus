@@ -41,8 +41,8 @@ def is_possible_gender_word(wordtag):
 
 
 def _gender_features(word):
-    if word in MALE_PRONOUN_SEQ + FEMALE_PRONOUN_SEQ + NEUTRAL_PRONOUN_SEQ:
-        return {'pronoun': word}
+    if word.lower() in MALE_PRONOUN_SEQ + FEMALE_PRONOUN_SEQ + NEUTRAL_PRONOUN_SEQ:
+        return {'pronoun': word.lower()}
     else:
         return {'last_letters': word[-2:]}
 
