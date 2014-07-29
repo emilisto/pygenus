@@ -78,8 +78,11 @@ def new_naive_bayes_classifier():
 
 def main():
     """Take input from stdin and print all matches as word, tag tuples."""
-    for match in classify(sys.stdin.read()):
-        print(match)
+    try:
+        for match in classify(sys.stdin.read()):
+            print(match)
+    except KeyboardInterrupt:
+        pass
 
 
 if __name__ == '__main__':
