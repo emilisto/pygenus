@@ -44,6 +44,24 @@ def test_compound_sentence():
         ]
 
 
+@pytest.mark.xfail
+def test_strip_punctuation():
+
+    def assert_ignores_word(text, word):
+        classifications = pygenus.classify(text)
+        assert word not in [word for word, gender in classifications]
+
+    assert_ignores_word(
+            'All the mark of Adam: all who bear the mark of Adam i.e. all men',
+            'i.e')
+
+    assert_ignores_word('No wonder is though Jove her stellify, <33> As ' \
+            'telleth Agathon, <34> for her goodness;', '<')
+
+    assert_ignores_word('Notes to The prologue to The Legend of Good ' \
+            'Women 1. Bernard.', '1.')
+
+
 def test_defines_all_neutral_pronouns():
     assert sorted(pygenus.NEUTRAL_PRONOUN_SEQ) == \
         sorted(('they', 'them', 'their', 'theirs', 'themselves'))
