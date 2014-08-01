@@ -15,6 +15,9 @@ PREPOSITION_SEQ = ('for',)
 CLASIFIER_CACHE = None
 """Cache trained classifier."""
 
+CLASIFIER_CACHE = None
+"""Cache trained classifier."""
+
 
 class Classifier:
 
@@ -51,7 +54,7 @@ def new_naive_bayes_classifier():
         neutral_pronoun_seq = _new_training_set(
             'neutral', NEUTRAL_PRONOUN_SEQ)
         excess_seq = _new_training_set(
-            'excess', chain(ABBREVIATION_SEQ, PREPOSITION_SEQ))
+            'excess', ABBREVIATION_SEQ, PREPOSITION_SEQ)
 
         featureset_seq = (
             (_gender_features(word), gender)
@@ -68,7 +71,8 @@ def new_naive_bayes_classifier():
 
 def _new_training_set(tag, *word_seq):
     return (((word, pos_tag), tag)
-            for word, pos_tag in nltk.pos_tag(list(chain(*word_seq))))
+            for word, pos_tag in
+            nltk.pos_tag(list(chain.from_iterable(word_seq))))
 
 
 def _gender_features(pos_tag):
