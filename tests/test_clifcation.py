@@ -2,46 +2,50 @@ import pygenus
 import pytest
 
 
+def classify(text):
+    return list(pygenus.classify(text))
+
+
 def test_totally_male():
-    assert list(pygenus.classify('John')) == [('John', 'male')]
+    assert classify('John') == [('John', 'male')]
 
 
 def test_no_false_positives_for_nouns():
-    assert list(pygenus.classify('boy')) == []
+    assert classify('boy') == []
 
 
 def test_totally_female():
-    assert list(pygenus.classify('Trinity')) == [('Trinity', 'female')]
+    assert classify('Trinity') == [('Trinity', 'female')]
 
 
 def test_totally_fuzzy():
-    assert list(pygenus.classify('Lauren')) == [('Lauren', 'female')]
+    assert classify('Lauren') == [('Lauren', 'female')]
 
 
 @pytest.mark.parametrize('pronoun', pygenus.MALE_PRONOUN_SEQ)
 def test_classify_male_pronouns_as_male(pronoun):
-    assert list(pygenus.classify(pronoun)) == [(pronoun, 'male')]
+    assert classify(pronoun) == [(pronoun, 'male')]
 
 
 @pytest.mark.parametrize('pronoun', pygenus.FEMALE_PRONOUN_SEQ)
 def test_classify_female_pronouns_as_female(pronoun):
-    assert list(pygenus.classify(pronoun)) == [(pronoun, 'female')]
+    assert classify(pronoun) == [(pronoun, 'female')]
 
 
 @pytest.mark.parametrize('pronoun', pygenus.NEUTRAL_PRONOUN_SEQ)
 def test_filter_out_gender_neutral_pronouns(pronoun):
-    assert list(pygenus.classify(pronoun)) == []
+    assert classify(pronoun) == []
 
 
 @pytest.mark.xfail(reason='Needs excess word set')
 def test_compound_sentence():
-    print(sorted(list(pygenus.classify(
+    print(sorted(classify(
         'John is looking for her, but Jane is'
-        'nowhere to be found with him.'))))
+        'nowhere to be found with him.')))
 
-    assert sorted(list(pygenus.classify(
+    assert sorted(classify(
         'John is looking for her, but Jane is'
-        'nowhere to be found with him.'))) == sorted([
+        'nowhere to be found with him.')) == sorted([
             ('John', 'male'),
             ('her', 'female'),
             ('Jane', 'female'),
@@ -52,7 +56,7 @@ def test_compound_sentence():
 def test_strip_punctuation():
 
     def assert_ignores_word(text, unexpected_word):
-        classifications = list(pygenus.classify(text))
+        classifications = classify(text)
         assert unexpected_word not in [word for word, _ in classifications]
 
     assert_ignores_word(
