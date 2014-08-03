@@ -37,20 +37,18 @@ def test_filter_out_gender_neutral_pronouns(pronoun):
     assert classify(pronoun) == []
 
 
-@pytest.mark.xfail(reason='Needs excess word set')
 def test_compound_sentence():
-    print(sorted(classify(
-        'John is looking for her, but Jane is'
-        'nowhere to be found with him.')))
+    text = ('John is looking for her, but Jane is'
+            'nowhere to be found with him.')
 
-    assert sorted(classify(
-        'John is looking for her, but Jane is'
-        'nowhere to be found with him.')) == sorted([
-            ('John', 'male'),
-            ('her', 'female'),
-            ('Jane', 'female'),
-            ('him', 'male'),
-        ])
+    classifications = sorted(classify(text))
+
+    assert classifications == sorted([
+        ('John', 'male'),
+        ('her', 'female'),
+        ('Jane', 'female'),
+        ('him', 'male'),
+    ])
 
 
 def test_dont_include_abbreviations():

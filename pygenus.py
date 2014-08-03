@@ -55,7 +55,9 @@ def new_naive_bayes_classifier():
         neutral_pronoun_seq = _new_training_set(
             'neutral', NEUTRAL_PRONOUN_SEQ)
         excess_seq = _new_training_set(
-            'excess', ABBREVIATION_SEQ, PREPOSITION_SEQ, string.punctuation)
+            'excess', ABBREVIATION_SEQ, PREPOSITION_SEQ, string.punctuation,
+            ('looking', 'is'),
+        )
 
         featureset_seq = (
             (_gender_features(word), gender)
@@ -91,6 +93,8 @@ def _gender_features(pos_tag):
         feature_dict = {'prep': word}
     elif word in string.punctuation:
         feature_dict = {'punctuation': word}
+    elif any(map(tag.startswith, ['VB', 'TO', 'DT', 'IN'])):
+        feature_dict.update({'some_oher_stuff': word})
     else:
         feature_dict.update({'last_letters': word[-2:]})
 
