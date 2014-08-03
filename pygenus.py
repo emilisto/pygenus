@@ -16,9 +16,6 @@ PREPOSITION_SEQ = ('for',)
 CLASIFIER_CACHE = None
 """Cache trained classifier."""
 
-CLASIFIER_CACHE = None
-"""Cache trained classifier."""
-
 
 class Classifier:
 
