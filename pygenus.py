@@ -13,7 +13,7 @@ ABBREVIATION_SEQ = ('i.e',)
 """Abbreviation last period gets removed by tokenizer."""
 PREPOSITION_SEQ = ('for',)
 
-CLASIFIER_CACHE = None
+CLASSIFIER_CACHE = None
 """Cache trained classifier."""
 
 
@@ -41,9 +41,9 @@ def classify(text):
 
 def new_naive_bayes_classifier():
     # Create feature set consisting of male and female names for training
-    global CLASIFIER_CACHE
-    if CLASIFIER_CACHE:
-        return CLASIFIER_CACHE
+    global CLASSIFIER_CACHE
+    if CLASSIFIER_CACHE:
+        return CLASSIFIER_CACHE
     else:
         male_word_seq = _new_training_set(
             'male', names.words('male.txt'), MALE_PRONOUN_SEQ)
@@ -64,9 +64,9 @@ def new_naive_bayes_classifier():
                     neutral_pronoun_seq,
                     excess_seq,
             ))
-        CLASIFIER_CACHE = nltk.NaiveBayesClassifier.train(featureset_seq)
+        CLASSIFIER_CACHE = nltk.NaiveBayesClassifier.train(featureset_seq)
 
-        return CLASIFIER_CACHE
+        return CLASSIFIER_CACHE
 
 
 def _new_training_set(tag, *word_seq):
