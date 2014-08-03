@@ -52,22 +52,24 @@ def test_compound_sentence():
             ('him', 'male'),
         ])
 
-@pytest.mark.xfail(reason='Doesn\'t exclude random symbols.')
-def test_strip_punctuation():
 
-    def assert_ignores_word(text, unexpected_word):
-        classifications = classify(text)
-        assert unexpected_word not in [word for word, _ in classifications]
-
+def test_dont_include_abbreviations():
     assert_ignores_word(
-            'All the mark of Adam: all who bear the mark of Adam i.e. all men',
-            'i.e')
+        'All the mark of Adam: all who bear the mark of Adam i.e. all men',
+        'i.e')
 
-    assert_ignores_word('No wonder is though Jove her stellify, <33> As ' \
-            'telleth Agathon, <34> for her goodness;', '<')
 
-    assert_ignores_word('Notes to The prologue to The Legend of Good ' \
-            'Women 1. Bernard.', '1.')
+def test_dont_include_punctuation():
+    assert_ignores_word(
+        'No wonder is though Jove her stellify, <33> As '
+        'telleth Agathon, <34> for her goodness;',
+        '<')
+
+
+def test_dont_include_numbers():
+    assert_ignores_word(
+        'Notes to The prologue to The Legend of Good Women 1. Bernard.',
+        '1.')
 
 
 def test_defines_all_neutral_pronouns():
@@ -93,3 +95,8 @@ def test_has_training_set_for_abbrevations():
 def test_has_training_set_for_prepositions():
     assert sorted(pygenus.PREPOSITION_SEQ) == \
         sorted(('for',))
+
+
+def assert_ignores_word(text, unexpected_word):
+    classifications = classify(text)
+    assert unexpected_word not in [word for word, _ in classifications]
